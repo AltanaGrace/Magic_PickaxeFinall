@@ -6,6 +6,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.tana.magicpickaxemod.MagicPickaxeMod;
+import net.tana.magicpickaxemod.item.custom.MagicPickaxe;
 
 
 public class ModItems {
@@ -13,7 +14,7 @@ public class ModItems {
             DeferredRegister.create(ForgeRegistries.ITEMS, MagicPickaxeMod.MOD_ID);
 
     public static final RegistryObject<Item> MAGICPICKAXE = ITEMS.register("magicpickaxe",
-            () -> new Item(new Item.Properties()));
+            () -> new MagicPickaxe(new Item.Properties()));
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
