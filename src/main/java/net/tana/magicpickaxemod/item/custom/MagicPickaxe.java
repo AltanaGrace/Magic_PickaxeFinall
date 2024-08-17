@@ -25,6 +25,7 @@ public class MagicPickaxe extends Item {
             Level level = pContext.getLevel();
             assert player != null;
             BlockPos playerPos = player.blockPosition();
+            BlockPos dropPosition = playerPos.offset(0, 0, -1); // Позиция блока перед игроком
 
             // Проверяем блоки в радиусе 5
             for (int x = -5; x <= 5; x++) {
@@ -35,7 +36,7 @@ public class MagicPickaxe extends Item {
 
                         if (isValuableBlock(state)) {
                             // Дропаем руду
-                            dropOre(level, currentPos);
+                            dropOre(level, currentPos, dropPosition); //Передаем позицию игрока
                             level.setBlock(currentPos, Blocks.AIR.defaultBlockState(), 3); // Удаляем блок
                         }
                     }
@@ -47,12 +48,14 @@ public class MagicPickaxe extends Item {
         return InteractionResult.SUCCESS;
     }
 
-    private void dropOre(Level level, BlockPos pos) {
-        Block block = level.getBlockState(pos).getBlock();
+    private void dropOre(Level level, BlockPos orePos, BlockPos dropPosition) {
+        Block block = level.getBlockState(orePos).getBlock();
         ItemStack dropStack = new ItemStack(block.asItem());
-        ItemEntity itemEntity = new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), dropStack);
+        // Изменяем позицию для дропа
+        ItemEntity itemEntity = new ItemEntity(level, dropPosition.getX(), dropPosition.getY(), dropPosition.getZ(), dropStack);
         level.addFreshEntity(itemEntity);
     }
+
 
     private boolean isValuableBlock(BlockState state) {
         return state.is(Blocks.IRON_ORE) || state.is(Blocks.DIAMOND_ORE) || state.is(Blocks.COAL_ORE) ||
