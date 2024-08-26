@@ -11,6 +11,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 public class MagicPickaxe extends Item {
@@ -24,14 +25,16 @@ public class MagicPickaxe extends Item {
             Player player = pContext.getPlayer();
             Level level = pContext.getLevel();
             assert player != null;
-            BlockPos playerPos = player.blockPosition();
-            BlockPos dropPosition = playerPos.offset(0, 0, -1); // Позиция блока перед игроком
+            // Позиция блока, на который кликнули
+            BlockPos clickedPos = pContext.getClickedPos();
+            // Получаем координаты поля зрения игрока
+            BlockPos dropPosition = BlockPos.containing(player.getEyePosition());
 
             // Проверяем блоки в радиусе 5
             for (int x = -5; x <= 5; x++) {
                 for (int y = -5; y <= 5; y++) {
                     for (int z = -5; z <= 5; z++) {
-                        BlockPos currentPos = playerPos.offset(x, y, z);
+                        BlockPos currentPos = clickedPos.offset(x, y, z);
                         BlockState state = level.getBlockState(currentPos);
 
                         if (isValuableBlock(state)) {
@@ -51,7 +54,6 @@ public class MagicPickaxe extends Item {
     private void dropOre(Level level, BlockPos orePos, BlockPos dropPosition) {
         Block block = level.getBlockState(orePos).getBlock();
         ItemStack dropStack = new ItemStack(block.asItem());
-        // Изменяем позицию для дропа
         ItemEntity itemEntity = new ItemEntity(level, dropPosition.getX(), dropPosition.getY(), dropPosition.getZ(), dropStack);
         level.addFreshEntity(itemEntity);
     }
